@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>어원 퀴즈 - 영어 단어의 역사</title>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fffaf8;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #ffcdc7;
+            padding-bottom: 1rem;
+            background: linear-gradient(to right, #fff5f5, #ffe9e9);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(231, 111, 111, 0.1);
+        }
+        
+        h1 {
+            color: #c22e2e;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            color: #d86565;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .nav-link {
+            color: #c22e2e;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: #fff5f5;
+            border: 1px solid #ffcdc7;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            background-color: #ffcdc7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(231, 111, 111, 0.15);
+        }
+        
+        .quiz-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(231, 111, 111, 0.15);
+            margin: 2rem auto;
+            max-width: 700px;
+            border-left: 4px solid #e76f6f;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 300px;
+        }
+        
+        .quiz-question {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            white-space: pre-line;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 2rem;
+        }
+        
+        .option-btn {
+            padding: 15px;
+            background-color: #fff5f5;
+            border: 1px solid #ffcdc7;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .option-btn:hover {
+            background-color: #ffede9;
+            transform: translateY(-2px);
+        }
+        
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        
+        .option-btn.disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result-message {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            font-weight: bold;
+            min-height: 30px;
+        }
+        
+        .correct-message {
+            color: #155724;
+        }
+        
+        .incorrect-message {
+            color: #721c24;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .control-btn {
+            padding: 12px 25px;
+            background-color: #c22e2e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin: 0 10px;
+        }
+        
+        .control-btn:hover {
+            background-color: #a12525;
+        }
+        
+        .control-btn.disabled {
+            background-color: #e9c6c6;
+            cursor: not-allowed;
+        }
+        
+        .score-container {
+            text-align: center;
+            margin: 1rem 0;
+            font-size: 1.2rem;
+            color: #d86565;
+        }
+        
+        .streak-container {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 1rem 0;
+        }
+        
+        .streak-marker {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #e9c6c6;
+        }
+        
+        .streak-marker.correct {
+            background-color: #c22e2e;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #ffcdc7;
+            color: #d86565;
+            font-size: 0.9rem;
+        }
+        
+        /* 반응형 애니메이션 효과 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .quiz-container {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .correct {
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        /* 장식 요소 추가 */
+        .decoration {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,205,199,0.5) 0%, rgba(255,245,245,0) 70%);
+            z-index: -1;
+        }
+        
+        /* 점수 애니메이션 */
+        @keyframes scoreUp {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); color: #c22e2e; }
+            100% { transform: scale(1); }
+        }
+        
+        .score-up {
+            animation: scoreUp 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- 장식 요소 -->
+    <div class="decoration" style="top: 150px; left: 10%; opacity: 0.7;"></div>
+    <div class="decoration" style="top: 300px; right: 15%; opacity: 0.5;"></div>
+    <div class="decoration" style="bottom: 200px; left: 20%; opacity: 0.6;"></div>
+    
+    <header>
+        <h1>어원 퀴즈</h1>
+        <div class="subtitle">영어 단어의 역사와 기원을 게임으로 배워보세요</div>
+    </header>
+    
+    <div class="nav-links">
+        <a href="/" class="nav-link">어원 검색</a>
+        <a href="/quiz" class="nav-link">어원 퀴즈</a>
+    </div>
+    
+    <div class="score-container">
+        점수: <span id="score">0</span> | 연속 정답: <span id="streak">0</span>
+    </div>
+    
+    <div class="streak-container" id="streak-markers">
+        <!-- 연속 정답 표시 마커 -->
+    </div>
+    
+    <div class="quiz-container">
+        <div class="quiz-question" id="question">
+            퀴즈를 불러오는 중...
+        </div>
+        
+        <div class="options-container" id="options">
+            <!-- 선택지 버튼들이 여기에 동적으로 추가됩니다 -->
+        </div>
+        
+        <div class="result-message" id="result-message"></div>
+        
+        <div class="controls">
+            <button id="next-btn" class="control-btn disabled">다음 문제</button>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2023 어원 탐험가 - 영어 단어의 어원을 탐험하는 학습 도구</p>
+    </footer>
+    
+    <script>
+        let currentQuiz = null;
+        let score = 0;
+        let streak = 0;
+        let maxStreak = 5; // 최대 연속 정답 표시 개수
+        let answered = false;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // 연속 정답 마커 초기화
+            updateStreakMarkers();
+            
+            // 첫 번째 퀴즈 로드
+            fetchNewQuiz();
+            
+            // 다음 문제 버튼 이벤트 리스너
+            document.getElementById('next-btn').addEventListener('click', function() {
+                if (this.classList.contains('disabled')) return;
+                
+                fetchNewQuiz();
+                this.classList.add('disabled');
+                document.getElementById('result-message').textContent = '';
+                answered = false;
+            });
+        });
+        
+        function fetchNewQuiz() {
+            fetch('/get_quiz')
+                .then(response => response.json())
+                .then(data => {
+                    currentQuiz = data;
+                    displayQuiz(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('question').textContent = '퀴즈를 불러오는 데 실패했습니다. 페이지를 새로고침 해주세요.';
+                });
+        }
+        
+        function displayQuiz(quiz) {
+            // 질문 표시
+            document.getElementById('question').textContent = quiz.question;
+            
+            // 선택지 표시
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            quiz.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option;
+                button.dataset.index = index;
+                
+                button.addEventListener('click', function() {
+                    if (answered) return;
+                    answered = true;
+                    
+                    const selectedIndex = parseInt(this.dataset.index);
+                    checkAnswer(selectedIndex);
+                });
+                
+                optionsContainer.appendChild(button);
+            });
+        }
+        
+        function checkAnswer(selectedIndex) {
+            const correctIndex = currentQuiz.correct_index;
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            // 모든 버튼 비활성화
+            optionButtons.forEach(button => {
+                button.classList.add('disabled');
+            });
+            
+            // 정답 여부 확인 및 표시
+            if (selectedIndex === correctIndex) {
+                // 정답인 경우
+                optionButtons[selectedIndex].classList.add('correct');
+                document.getElementById('result-message').textContent = '정답입니다!';
+                document.getElementById('result-message').className = 'result-message correct-message';
+                
+                // 점수와 연속 정답 증가
+                score += 10;
+                streak += 1;
+                document.getElementById('score').textContent = score;
+                document.getElementById('score').classList.add('score-up');
+                setTimeout(() => {
+                    document.getElementById('score').classList.remove('score-up');
+                }, 500);
+                
+                document.getElementById('streak').textContent = streak;
+            } else {
+                // 오답인 경우
+                optionButtons[selectedIndex].classList.add('incorrect');
+                optionButtons[correctIndex].classList.add('correct');
+                document.getElementById('result-message').textContent = `오답입니다. 정답은 "${currentQuiz.correct_answer}"입니다.`;
+                document.getElementById('result-message').className = 'result-message incorrect-message';
+                
+                // 연속 정답 초기화
+                streak = 0;
+                document.getElementById('streak').textContent = streak;
+            }
+            
+            // 연속 정답 마커 업데이트
+            updateStreakMarkers();
+            
+            // 다음 문제 버튼 활성화
+            document.getElementById('next-btn').classList.remove('disabled');
+        }
+        
+        function updateStreakMarkers() {
+            const container = document.getElementById('streak-markers');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < maxStreak; i++) {
+                const marker = document.createElement('div');
+                marker.className = 'streak-marker';
+                if (i < streak) {
+                    marker.classList.add('correct');
+                }
+                container.appendChild(marker);
+            }
+        }
+    </script>
+</body>
+</html> 
